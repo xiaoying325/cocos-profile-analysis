@@ -1,0 +1,225 @@
+{
+  "ver": "1.1.3",
+  "uuid": "fac2b5e9-4d68-4d4f-9c5d-37660a8aaf18",
+  "importer": "fbx",
+  "scaleFactor": 1,
+  "boneCount": 143,
+  "precomputeJointMatrix": false,
+  "animationFrameRate": 30,
+  "subMetas": {
+    "buffer.bin": {
+      "ver": "1.0.2",
+      "uuid": "daaf83c8-d35b-44b6-b680-68fec96d9be6",
+      "importer": "buffer",
+      "name": "buffer.bin",
+      "subMetas": {}
+    },
+    "longshentaizi.mesh": {
+      "ver": "1.0.3",
+      "uuid": "e6b2112f-d6aa-4e8f-a58b-9aafcefcde2d",
+      "importer": "mesh",
+      "verts": 13339,
+      "tris": 21161,
+      "submeshes": 1,
+      "attributes": [
+        [
+          "a_joints",
+          "a_normal",
+          "a_position",
+          "a_uv0",
+          "a_weights"
+        ]
+      ],
+      "minPos": {
+        "x": -1.50828957557678,
+        "y": -0.400592118501663,
+        "z": -0.00777524942532182
+      },
+      "maxPos": {
+        "x": 1.50828957557678,
+        "y": 0.568923115730286,
+        "z": 3.9735164642334
+      },
+      "name": "longshentaizi.mesh",
+      "subMetas": {}
+    },
+    "changqiang.mesh": {
+      "ver": "1.0.3",
+      "uuid": "985a778f-80c3-4a8a-938a-d3c9c5fc9878",
+      "importer": "mesh",
+      "verts": 786,
+      "tris": 1156,
+      "submeshes": 1,
+      "attributes": [
+        [
+          "a_joints",
+          "a_normal",
+          "a_position",
+          "a_uv0",
+          "a_weights"
+        ]
+      ],
+      "minPos": {
+        "x": -2.17741799354553,
+        "y": -0.136418923735619,
+        "z": 0.0631829351186752
+      },
+      "maxPos": {
+        "x": -1.80277681350708,
+        "y": 0.136418923735619,
+        "z": 4.39312744140625
+      },
+      "name": "changqiang.mesh",
+      "subMetas": {}
+    },
+    "aobing-0.skeleton": {
+      "ver": "1.0.3",
+      "uuid": "3eea2322-3848-4969-b384-2a5a91397114",
+      "importer": "skeleton",
+      "name": "aobing-0.skeleton",
+      "subMetas": {}
+    },
+    "aobing-1.skeleton": {
+      "ver": "1.0.3",
+      "uuid": "c79ca530-b99d-4500-9f11-c4548a2f6ce7",
+      "importer": "skeleton",
+      "name": "aobing-1.skeleton",
+      "subMetas": {}
+    },
+    "aobing.prefab": {
+      "ver": "1.3.2",
+      "uuid": "61a76b72-4aed-4ab2-ae53-07e5960f0497",
+      "importer": "prefab",
+      "optimizationPolicy": "AUTO",
+      "asyncLoadAssets": false,
+      "readonly": true,
+      "content": [
+        {
+          "__type__": "cc.Prefab",
+          "_name": "",
+          "_objFlags": 0,
+          "data": {
+            "__id__": 1
+          }
+        },
+        {
+          "__type__": "cc.Node",
+          "_name": "Sprite",
+          "_objFlags": 0,
+          "_opacity": 255,
+          "_color": {
+            "__type__": "cc.Color",
+            "r": 255,
+            "g": 255,
+            "b": 255,
+            "a": 255
+          },
+          "_cascadeOpacityEnabled": true,
+          "_parent": null,
+          "_anchorPoint": {
+            "__type__": "cc.Vec2",
+            "x": 0.5,
+            "y": 0.5
+          },
+          "_contentSize": {
+            "__type__": "cc.Size",
+            "width": 40,
+            "height": 36
+          },
+          "_children": [],
+          "_skewX": 0,
+          "_skewY": 0,
+          "_localZOrder": 0,
+          "_globalZOrder": 0,
+          "_tag": -1,
+          "_opacityModifyRGB": false,
+          "_reorderChildDirty": false,
+          "_id": "",
+          "_active": true,
+          "_components": [
+            {
+              "__id__": 2
+            }
+          ],
+          "_prefab": {
+            "__id__": 3
+          },
+          "_eulerAngles": {
+            "__type__": "cc.Vec3",
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "_trs": {
+            "__type__": "TypedArray",
+            "ctor": "Float64Array",
+            "array": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "__type__": "cc.Sprite",
+          "_name": "",
+          "_objFlags": 0,
+          "node": {
+            "__id__": 1
+          },
+          "_enabled": true,
+          "_spriteFrame": {
+            "__uuid__": "8cdb44ac-a3f6-449f-b354-7cd48cf84061"
+          },
+          "_type": 0,
+          "_sizeMode": 1,
+          "_fillType": 0,
+          "_fillCenter": {
+            "__type__": "cc.Vec2",
+            "x": 0,
+            "y": 0
+          },
+          "_fillStart": 0,
+          "_fillRange": 0,
+          "_isTrimmedMode": true,
+          "_srcBlendFactor": 770,
+          "_dstBlendFactor": 771,
+          "_atlas": null
+        },
+        {
+          "__type__": "cc.PrefabInfo",
+          "root": {
+            "__id__": 1
+          },
+          "asset": null,
+          "fileId": "d7118yAG5lKybkFOAh8koPL"
+        }
+      ],
+      "name": "aobing.prefab",
+      "subMetas": {}
+    },
+    "Material #2.mtl": {
+      "ver": "1.0.5",
+      "uuid": "3449fedf-a9c9-4c4a-b588-76e63fa79eb0",
+      "importer": "material",
+      "dataAsSubAsset": "{\n  \"__type__\": \"cc.Material\",\n  \"_name\": \"Material #2\",\n  \"_objFlags\": 0,\n  \"_native\": \"\",\n  \"_effectAsset\": {\n    \"__uuid__\": \"abc2cb62-7852-4525-a90d-d474487b88f2\"\n  },\n  \"_techniqueIndex\": 0,\n  \"_techniqueData\": {\n    \"0\": {\n      \"props\": {\n        \"diffuseColor\": {\n          \"__type__\": \"cc.Color\",\n          \"r\": 255,\n          \"g\": 255,\n          \"b\": 255,\n          \"a\": 255\n        },\n        \"diffuseTexture\": {\n          \"__uuid__\": \"502be080-63cf-40da-a555-2235eda26461\"\n        }\n      },\n      \"defines\": {\n        \"USE_DIFFUSE_TEXTURE\": true\n      }\n    }\n  }\n}",
+      "name": "Material #2.mtl",
+      "subMetas": {}
+    },
+    "Material #3.mtl": {
+      "ver": "1.0.5",
+      "uuid": "101b03a5-bfcf-44d4-9aaf-6a2e2aea8f58",
+      "importer": "material",
+      "dataAsSubAsset": "{\n  \"__type__\": \"cc.Material\",\n  \"_name\": \"Material #3\",\n  \"_objFlags\": 0,\n  \"_native\": \"\",\n  \"_effectAsset\": {\n    \"__uuid__\": \"abc2cb62-7852-4525-a90d-d474487b88f2\"\n  },\n  \"_techniqueIndex\": 0,\n  \"_techniqueData\": {\n    \"0\": {\n      \"props\": {\n        \"diffuseColor\": {\n          \"__type__\": \"cc.Color\",\n          \"r\": 255,\n          \"g\": 255,\n          \"b\": 255,\n          \"a\": 255\n        },\n        \"diffuseTexture\": {\n          \"__uuid__\": \"875fb50d-bad0-4744-b64e-c0cc1d4dc1d4\"\n        }\n      },\n      \"defines\": {\n        \"USE_DIFFUSE_TEXTURE\": true\n      }\n    }\n  }\n}",
+      "name": "Material #3.mtl",
+      "subMetas": {}
+    }
+  }
+}
