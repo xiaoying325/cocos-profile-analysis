@@ -1,23 +1,20 @@
 {
-  "ver": "1.1.3",
+  "ver": "1.1.1",
   "uuid": "fac2b5e9-4d68-4d4f-9c5d-37660a8aaf18",
-  "importer": "fbx",
   "scaleFactor": 1,
   "boneCount": 143,
   "precomputeJointMatrix": false,
   "animationFrameRate": 30,
   "subMetas": {
     "buffer.bin": {
-      "ver": "1.0.2",
+      "ver": "1.0.0",
       "uuid": "daaf83c8-d35b-44b6-b680-68fec96d9be6",
-      "importer": "buffer",
       "name": "buffer.bin",
       "subMetas": {}
     },
     "longshentaizi.mesh": {
-      "ver": "1.0.3",
+      "ver": "1.0.1",
       "uuid": "e6b2112f-d6aa-4e8f-a58b-9aafcefcde2d",
-      "importer": "mesh",
       "verts": 13339,
       "tris": 21161,
       "submeshes": 1,
@@ -44,9 +41,8 @@
       "subMetas": {}
     },
     "changqiang.mesh": {
-      "ver": "1.0.3",
+      "ver": "1.0.1",
       "uuid": "985a778f-80c3-4a8a-938a-d3c9c5fc9878",
-      "importer": "mesh",
       "verts": 786,
       "tris": 1156,
       "submeshes": 1,
@@ -73,23 +69,20 @@
       "subMetas": {}
     },
     "aobing-0.skeleton": {
-      "ver": "1.0.3",
+      "ver": "1.0.1",
       "uuid": "3eea2322-3848-4969-b384-2a5a91397114",
-      "importer": "skeleton",
       "name": "aobing-0.skeleton",
       "subMetas": {}
     },
     "aobing-1.skeleton": {
-      "ver": "1.0.3",
+      "ver": "1.0.1",
       "uuid": "c79ca530-b99d-4500-9f11-c4548a2f6ce7",
-      "importer": "skeleton",
       "name": "aobing-1.skeleton",
       "subMetas": {}
     },
     "aobing.prefab": {
-      "ver": "1.3.2",
+      "ver": "1.2.9",
       "uuid": "61a76b72-4aed-4ab2-ae53-07e5960f0497",
-      "importer": "prefab",
       "optimizationPolicy": "AUTO",
       "asyncLoadAssets": false,
       "readonly": true,
@@ -206,17 +199,15 @@
       "subMetas": {}
     },
     "Material #2.mtl": {
-      "ver": "1.0.5",
+      "ver": "1.0.3",
       "uuid": "3449fedf-a9c9-4c4a-b588-76e63fa79eb0",
-      "importer": "material",
       "dataAsSubAsset": "{\n  \"__type__\": \"cc.Material\",\n  \"_name\": \"Material #2\",\n  \"_objFlags\": 0,\n  \"_native\": \"\",\n  \"_effectAsset\": {\n    \"__uuid__\": \"abc2cb62-7852-4525-a90d-d474487b88f2\"\n  },\n  \"_techniqueIndex\": 0,\n  \"_techniqueData\": {\n    \"0\": {\n      \"props\": {\n        \"diffuseColor\": {\n          \"__type__\": \"cc.Color\",\n          \"r\": 255,\n          \"g\": 255,\n          \"b\": 255,\n          \"a\": 255\n        },\n        \"diffuseTexture\": {\n          \"__uuid__\": \"502be080-63cf-40da-a555-2235eda26461\"\n        }\n      },\n      \"defines\": {\n        \"USE_DIFFUSE_TEXTURE\": true\n      }\n    }\n  }\n}",
       "name": "Material #2.mtl",
       "subMetas": {}
     },
     "Material #3.mtl": {
-      "ver": "1.0.5",
+      "ver": "1.0.3",
       "uuid": "101b03a5-bfcf-44d4-9aaf-6a2e2aea8f58",
-      "importer": "material",
       "dataAsSubAsset": "{\n  \"__type__\": \"cc.Material\",\n  \"_name\": \"Material #3\",\n  \"_objFlags\": 0,\n  \"_native\": \"\",\n  \"_effectAsset\": {\n    \"__uuid__\": \"abc2cb62-7852-4525-a90d-d474487b88f2\"\n  },\n  \"_techniqueIndex\": 0,\n  \"_techniqueData\": {\n    \"0\": {\n      \"props\": {\n        \"diffuseColor\": {\n          \"__type__\": \"cc.Color\",\n          \"r\": 255,\n          \"g\": 255,\n          \"b\": 255,\n          \"a\": 255\n        },\n        \"diffuseTexture\": {\n          \"__uuid__\": \"875fb50d-bad0-4744-b64e-c0cc1d4dc1d4\"\n        }\n      },\n      \"defines\": {\n        \"USE_DIFFUSE_TEXTURE\": true\n      }\n    }\n  }\n}",
       "name": "Material #3.mtl",
       "subMetas": {}

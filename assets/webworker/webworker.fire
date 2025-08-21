@@ -58,7 +58,7 @@
     "_groupIndex": 0,
     "groupIndex": 0,
     "autoReleaseAssets": false,
-    "_id": "51TOkDSSdNlooaXdppqIUV"
+    "_id": "cf832c20-8a22-4ab8-978f-5d9e05354e41"
   },
   {
     "__type__": "cc.Node",
@@ -293,7 +293,7 @@
     "_is3DNode": false,
     "_groupIndex": 0,
     "groupIndex": 0,
-    "_id": "7e2krsmZBHHajR1yw9JL4g"
+    "_id": "101Ijmzh1L7ZJvl037QLzI"
   },
   {
     "__type__": "cc.Sprite",
@@ -325,7 +325,7 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_atlas": null,
-    "_id": "5bpn4OLP1Nd77S3RXGMUUT"
+    "_id": "e6d3aWptZBwKkas0deY/8m"
   },
   {
     "__type__": "cc.Canvas",
@@ -382,6 +382,7 @@
     "someSprite": {
       "__id__": 6
     },
+    "gifUrl": "http://127.0.0.1:10001/test.gif",
     "_id": "4d0U7gSZtKobc/G282KY7j"
   }
 ]
