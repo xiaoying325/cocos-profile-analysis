@@ -26,6 +26,18 @@ export default class TestUIManager extends cc.Component {
     }
 
     start() {
+
+
+
+        console.log(UILayer);
+
+        console.log(UILayer.BACKGROUND)
+        console.log(UILayer[UILayer.NORMAL])
+
+        console.log(Object.keys(UILayer))
+
+
+
         // 模拟网络请求
         setTimeout(() => {
             let newData = { key: "网络数据" }

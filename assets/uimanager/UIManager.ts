@@ -22,8 +22,8 @@ export default class UIManager {
     private uiRoot: cc.Node = null;
     private uiLayers: Map<UILayer, cc.Node> = new Map()
     /**
-     * 存储了所有打开的UI实例
-     * - 叫做，缓存所有打开的UI实例
+     * 所有当前打开的UI都存放到这个map中了
+     * - 简单点说，就是把当前打开的ui缓存到这个表中，方便读取内容
      */
     private uiOpens: Map<string, UIBase> = new Map()
 
@@ -36,16 +36,21 @@ export default class UIManager {
 
     public init(root: cc.Node) {
         this.uiRoot = root;
+
         // 创建这些层级节点
-        for (let layer = UILayer.BACKGROUND; layer <= UILayer.TOP; layer++) {
-            const node = new cc.Node(`UILayer_${layer}_${UILayer[layer]}`);
 
-            this.uiRoot.addChild(node);
-            node.setSiblingIndex(layer);
-            this.uiLayers.set(layer, node);
-        }
+        Object.keys(UILayer)
+            .filter(key => isNaN(Number(key))) // 过滤掉枚举的数值键
+            .forEach(key => {
+                const layer = UILayer[key]; // 数值 (0,1,2...)
+                const node = new cc.Node(key); // 节点名称用字符串，比如 "BACKGROUND"
 
+                this.uiRoot.addChild(node);
+                node.setSiblingIndex(layer);   // 控制渲染顺序
+                this.uiLayers.set(layer, node); // 存的是数值作为 key
+            });
     }
+
 
 
     public async open(uiconf: UIConfig, ...params: any[]): Promise<UIBase> {
