@@ -56,6 +56,10 @@ export default class webworkder extends cc.Component {
             return new cc.SpriteFrame(tex);
         });
 
+
+
+        console.log("解析出的frames", frames);
+
         this.delays = frames.map(f => f.delay / 100); // gifuct-js delay 单位是 10ms
         this.frameIndex = 0;
         this.elapsed = 0;
@@ -71,7 +75,7 @@ export default class webworkder extends cc.Component {
         this.elapsed += dt;
         let delay = this.delays[this.frameIndex] //|| 0.1; // 默认 0.1s 一帧
 
-        if (this.elapsed >= delay) {
+        if (this.elapsed >= 0.02) {
             this.elapsed = 0;
             this.frameIndex = (this.frameIndex + 1) % this.frames.length;
             this.someSprite.spriteFrame = this.frames[this.frameIndex];
