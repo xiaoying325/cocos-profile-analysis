@@ -69,7 +69,7 @@ export default class webworkder extends cc.Component {
         if (!this.frames.length) return;
 
         this.elapsed += dt;
-        let delay = this.delays[this.frameIndex] || 0.1; // 默认 0.1s 一帧
+        let delay = this.delays[this.frameIndex] //|| 0.1; // 默认 0.1s 一帧
 
         if (this.elapsed >= delay) {
             this.elapsed = 0;
