@@ -79,6 +79,9 @@
       },
       {
         "__id__": 6
+      },
+      {
+        "__id__": 7
       }
     ],
     "_prefab": null,
@@ -270,5 +273,17 @@
     "_originalWidth": 0,
     "_originalHeight": 0,
     "_id": "c5NQR3pMNEF7nvyUoJIah6"
+  },
+  {
+    "__type__": "56594tDX2dPBqQcwohvsZOe",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 2
+    },
+    "_enabled": true,
+    "someSprite": null,
+    "gifUrl": "http://127.0.0.1:10001/test.gif",
+    "_id": "1eYALEvDtHSqBsOD7hAiS0"
   }
 ]
