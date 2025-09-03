@@ -83,10 +83,11 @@ export default class UIManager {
     public async open(uiconf: UIConfig, ...params: any[]): Promise<UIBase> {
         const { bundle, url, layer, isCache } = uiconf;
 
-        if (!bundle || !url || !layer) {
+        if (!bundle || !url || layer === undefined || layer === null) {
             cc.error("UIManager.open 传入的参数不完整");
             return null;
         }
+
 
         let ui: UIBase = null;
 
@@ -143,7 +144,7 @@ export default class UIManager {
      * - 根据配置中的cache字段，来决定ui实例是隐藏还是销毁
     */
     public close(url: string) {
-        let ui = this.uiOpens.get(url);
+        const ui = this.uiOpens.get(url);
         if (!ui) {
             cc.error(`UIManager.close 没有找到这个UI: ${url}`);
             return;
@@ -151,11 +152,10 @@ export default class UIManager {
 
         const { isCache } = ui.uiConf;
 
-        // 在关闭时一定要触发失焦
-        if (this.currentFocusedUI === ui) {
-            ui.onFocusLost();
-        }
+        // 先处理焦点回退（这里会在需要时调用一次 onFocusLost）
+        this.handleFocusOnClose(ui);
 
+        // 再执行隐藏/销毁
         if (isCache) {
             ui.node.active = false;
             ui.onHide();
@@ -164,8 +164,6 @@ export default class UIManager {
             ui.node.destroy();
         }
 
-        // 焦点回退
-        this.handleFocusOnClose(ui);
         this.uiOpens.delete(url);
     }
 
@@ -175,24 +173,24 @@ export default class UIManager {
      * @param ui 要设置焦点的UI
      */
     private setFocus(ui: UIBase) {
-        // 如果当前有焦点UI且不是同一个UI，先调用失焦处理
+        // 如果切换到不同的UI，先让旧UI失去焦点（但不要把旧UI从栈里移除！）
         if (this.currentFocusedUI && this.currentFocusedUI !== ui) {
             this.currentFocusedUI.onFocusLost();
-            this.removeFromFocusStack(this.currentFocusedUI);
+            // 这里千万不要 removeFromFocusStack(this.currentFocusedUI);
+            // 我们要保留历史，才能回退
         }
 
-        // 设置新的焦点UI
+        // 更新当前焦点
         this.currentFocusedUI = ui;
 
-        // 如果UI已经在栈中，先移除
+        // 把“新 UI”在栈里去重，然后压到栈顶
         this.removeFromFocusStack(ui);
-
-        // 添加到栈顶
         this.focusStack.push(ui);
 
-        // 调用onFocus方法
+        // 通知获得焦点
         ui.onFocus();
     }
+
 
     /**
      * 从焦点栈中移除UI
@@ -224,25 +222,25 @@ export default class UIManager {
      * @param closedUI 被关闭的UI
      */
     private handleFocusOnClose(closedUI: UIBase) {
-        // 如果被关闭的UI是当前焦点UI，先调用失焦处理
-        if (this.currentFocusedUI === closedUI) {
+        const wasFocused = (this.currentFocusedUI === closedUI);
+
+        // 如果被关闭的正是当前焦点，先让它失焦（只调用一次）
+        if (wasFocused) {
             closedUI.onFocusLost();
         }
 
-        // 从焦点栈中移除被关闭的UI
+        // 不管是否是焦点，都需要把它从栈里移除
         this.removeFromFocusStack(closedUI);
 
-        // 如果被关闭的UI是当前焦点UI
-        if (this.currentFocusedUI === closedUI) {
-            // 从焦点栈中获取上一个UI作为新的焦点
-            if (this.focusStack.length > 0) {
-                const newFocusUI = this.focusStack[this.focusStack.length - 1];
-                this.currentFocusedUI = newFocusUI;
+        // 如果它是当前焦点，回退到栈顶的上一个 UI
+        if (wasFocused) {
+            const newFocusUI = this.focusStack[this.focusStack.length - 1] || null;
+            this.currentFocusedUI = newFocusUI;
+            if (newFocusUI) {
                 newFocusUI.onFocus();
-            } else {
-                this.currentFocusedUI = null;
             }
         }
+        // 如果不是当前焦点被关闭，则不改变 currentFocusedUI
     }
 
     // update (dt) {}
