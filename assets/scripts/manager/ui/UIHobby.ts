@@ -69,6 +69,22 @@ export default class UIHobby extends UIBase {
         // this.updateUIState();
     }
 
+    public onFocusLost(...params: any[]): void {
+        console.log('UIHobby 失去焦点，可以在这里暂停动画或保存状态');
+        
+        // 调用父类的onFocusLost
+        super.onFocusLost(...params);
+        
+        // 示例：暂停动画
+        // this.pauseAnimations();
+        
+        // 示例：保存当前状态
+        // this.saveCurrentState();
+        
+        // 示例：解绑事件监听
+        // this.unbindEvents();
+    }
+
 
     public onHide(): void {
         console.log('UIHobby onHide');

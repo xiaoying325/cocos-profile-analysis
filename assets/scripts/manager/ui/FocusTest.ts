@@ -7,6 +7,11 @@ const { ccclass, property } = cc._decorator;
 @ccclass
 export default class FocusTest extends cc.Component {
 
+
+    protected onLoad(): void {
+        UIManager.instance.init(this.node);
+    }
+
     start() {
         // 延迟执行测试，确保UIManager已初始化
         this.scheduleOnce(() => {
@@ -36,8 +41,8 @@ export default class FocusTest extends cc.Component {
             // 等待2秒
             await this.wait(2000);
 
-            // 测试2：打开第二个UI
-            console.log("测试2：打开UIDialogRule");
+            // 测试2：打开第二个UI（应该触发UIHobby的onFocusLost）
+            console.log("测试2：打开UIDialogRule（应该触发UIHobby的onFocusLost）");
             const ui2 = await UIManager.instance.open({
                 bundle: 'resources',
                 url: 'prefabs/dialog/UIDialogRule',
@@ -51,8 +56,8 @@ export default class FocusTest extends cc.Component {
             // 等待2秒
             await this.wait(2000);
 
-            // 测试3：关闭当前UI，测试焦点转移
-            console.log("测试3：关闭UIDialogRule，测试焦点转移");
+            // 测试3：关闭当前UI，测试焦点转移（应该触发UIDialogRule的onFocusLost）
+            console.log("测试3：关闭UIDialogRule，测试焦点转移（应该触发UIDialogRule的onFocusLost）");
             UIManager.instance.close('prefabs/dialog/UIDialogRule');
 
             console.log("当前焦点UI:", UIManager.instance.getCurrentFocusedUI()?.uiName);

@@ -107,8 +107,20 @@ export default abstract class UIBase extends cc.Component {
      * 失去焦点时的通用处理
      * 子类可以重写此方法来实现具体的失焦处理逻辑
      */
-    protected onFocusLost(...params: any[]) {
-        // 默认空实现，子类可以重写
+    public onFocusLost(...params: any[]) {
+        // 默认实现：输出调试信息
+        if (this.uiName) {
+            console.log(`UI [${this.uiName}] 失去焦点`, ...params);
+        } else {
+            console.log(`UI [${this.uiConf?.url || 'Unknown'}] 失去焦点`, ...params);
+        }
+        
+        // 子类可以重写此方法来实现具体的失焦处理逻辑
+        // 例如：
+        // - 暂停动画或音效
+        // - 保存当前状态
+        // - 解绑事件监听
+        // - 清理临时数据等
     }
 
 }

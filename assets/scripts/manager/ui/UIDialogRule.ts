@@ -35,6 +35,19 @@ export default class UIDialogRule extends UIBase {
         // this.refreshRuleData();
     }
 
+    public onFocusLost(...params: any[]): void {
+        console.log('UIDialogRule 失去焦点，可以在这里保存规则设置');
+        
+        // 调用父类的onFocusLost
+        super.onFocusLost(...params);
+        
+        // 示例：保存规则设置
+        // this.saveRuleSettings();
+        
+        // 示例：暂停规则动画
+        // this.pauseRuleAnimations();
+    }
+
     start () {
 
     }

@@ -61,88 +61,83 @@ export default class UIManager {
             });
     }
 
+    private loadBundleAsync(bundleName: string): Promise<cc.AssetManager.Bundle> {
+        return new Promise((resolve, reject) => {
+            cc.assetManager.loadBundle(bundleName, (err, bundle) => {
+                if (err) reject(err);
+                else resolve(bundle);
+            });
+        });
+    }
 
+    // 封装成 Promise 版本的 load
+    private loadPrefabAsync(bundle: cc.AssetManager.Bundle, url: string): Promise<cc.Prefab> {
+        return new Promise((resolve, reject) => {
+            bundle.load(url, cc.Prefab, (err, prefab) => {
+                if (err) reject(err);
+                else resolve(prefab);
+            });
+        });
+    }
 
     public async open(uiconf: UIConfig, ...params: any[]): Promise<UIBase> {
-
-        // 对传入的参数进行校验
         const { bundle, url, layer, isCache } = uiconf;
+
         if (!bundle || !url || !layer) {
             cc.error("UIManager.open 传入的参数不完整");
             return null;
         }
 
-        if (this.uiOpens.get(url)) {
-            // 说明你打开的这个UI已经打开了
+        // 已经打开的UI
+        if (this.uiOpens.has(url)) {
             cc.error(`UIManager.open 重复打开UI: ${url}`);
-            const ui = this.uiOpens.get(url);
+
+            let ui = this.uiOpens.get(url);
+            ui.onShow(...params);
+            this.setFocus(ui);
             return ui;
         }
 
-
-        if (this.uiCache.get(url)) {
-            // 如果缓存中有这个ui的实例，那我们直接就使用即可
-            const ui = this.uiCache.get(url)
+        // 缓存的UI
+        if (this.uiCache.has(url)) {
+            const ui = this.uiCache.get(url);
             ui.node.active = true;
             ui.onShow(...params);
             this.uiOpens.set(url, ui);
-
-            // 设置缓存的UI为焦点
             this.setFocus(ui);
-
             return ui;
         }
 
+        try {
+            // 加载 bundle
+            const loadedBundle = await this.loadBundleAsync(bundle);
+            // 加载 prefab
+            const prefab = await this.loadPrefabAsync(loadedBundle, url);
+            // 实例化节点
+            const node = cc.instantiate(prefab);
+            const parent = this.uiLayers.get(layer);
+            parent.addChild(node);
 
-        return new Promise<UIBase>((resolve, reject) => {
-            cc.assetManager.loadBundle(bundle, (err, bundle) => {
-                if (err) {
-                    cc.error(`加载 bundle 失败: ${bundle}`, err);
-                    reject(err);
-                    return;
-                }
+            const ui = node.getComponent(UIBase);
+            if (!ui) {
+                cc.error(`Prefab 没有继承 BaseUI: ${url}`);
+                node.destroy();
+                return null;
+            }
 
+            ui.uiConf = uiconf;
+            this.uiOpens.set(url, ui);
+            if (isCache) this.uiCache.set(url, ui);
 
-                // 从bundle中加载url对应的资源
-                bundle.load(url, cc.Prefab, (err, prefab) => {
+            ui.onShow(...params);
+            this.setFocus(ui);
 
-                    if (err) {
-                        cc.error(`加载 UI 失败: ${url}`, err);
-                        reject(err);
-                        return;
-                    }
-                    const node = cc.instantiate(prefab);
-                    const parent = this.uiLayers.get(layer);
-                    parent.addChild(node);
-
-                    const ui = node.getComponent(UIBase);
-                    if (!ui) {
-                        cc.error(`Prefab 没有继承 BaseUI: ${url}`);
-                        reject();  // 这里有点问题，
-                        return;
-                    }
-
-
-                    ui.uiConf = uiconf; //写入ui配置
-
-                    this.uiOpens.set(url, ui);
-                    if (uiconf.isCache) {
-                        this.uiCache.set(url, ui);
-                    }
-
-                    ui.onShow(...params);
-                    
-                    // 设置新UI为焦点
-                    this.setFocus(ui);
-                    
-                    resolve(ui);
-
-                });
-            });
-
-        })
+            return ui;
+        } catch (err) {
+            cc.error(`打开 UI 失败: ${url}`, err);
+            return null;
+        }
     }
-
 
     /** 
      * 关闭UI
@@ -176,17 +171,18 @@ export default class UIManager {
      * @param ui 要设置焦点的UI
      */
     private setFocus(ui: UIBase) {
-        // 如果当前有焦点UI，将其从焦点栈中移除
+        // 如果当前有焦点UI且不是同一个UI，先调用失焦处理
         if (this.currentFocusedUI && this.currentFocusedUI !== ui) {
+            this.currentFocusedUI.onFocusLost();
             this.removeFromFocusStack(this.currentFocusedUI);
         }
 
         // 设置新的焦点UI
         this.currentFocusedUI = ui;
-        
+
         // 将新UI添加到焦点栈顶部
         this.addToFocusStack(ui);
-        
+
         // 调用onFocus方法
         ui.onFocus();
     }
@@ -198,7 +194,7 @@ export default class UIManager {
     private addToFocusStack(ui: UIBase) {
         // 如果UI已经在栈中，先移除
         this.removeFromFocusStack(ui);
-        
+
         // 添加到栈顶
         this.focusStack.push(ui);
     }
@@ -233,9 +229,14 @@ export default class UIManager {
      * @param closedUI 被关闭的UI
      */
     private handleFocusOnClose(closedUI: UIBase) {
+        // 如果被关闭的UI是当前焦点UI，先调用失焦处理
+        if (this.currentFocusedUI === closedUI) {
+            closedUI.onFocusLost();
+        }
+
         // 从焦点栈中移除被关闭的UI
         this.removeFromFocusStack(closedUI);
-        
+
         // 如果被关闭的UI是当前焦点UI
         if (this.currentFocusedUI === closedUI) {
             // 从焦点栈中获取上一个UI作为新的焦点
