@@ -57,7 +57,7 @@ export default class FocusTest extends cc.Component {
             await this.wait(2000);
 
             // 测试3：关闭当前UI，测试焦点转移（应该触发UIDialogRule的onFocusLost）
-            console.log("测试3：关闭UIDialogRule，测试焦点转移（应该触发UIDialogRule的onFocusLost）");
+            console.log("测试3：关闭UIDialogRule，测试焦点转移（应该触发UIDialogRule的onFocusLost）,同时上一个uI如果没有关闭，应该会重新获得焦点");
             UIManager.instance.close('prefabs/dialog/UIDialogRule');
 
             console.log("当前焦点UI:", UIManager.instance.getCurrentFocusedUI()?.uiName);

@@ -22,7 +22,7 @@ export default class UIManager {
     private uiRoot: cc.Node = null;
     private uiLayers: Map<UILayer, cc.Node> = new Map()
     /**
-     * 所有当前打开的UI都存放到这个map中了
+     * 存放当前所有已经打开的ui
      * - 简单点说，就是把当前打开的ui缓存到这个表中，方便读取内容
      */
     private uiOpens: Map<string, UIBase> = new Map()
@@ -127,7 +127,10 @@ export default class UIManager {
 
             ui.uiConf = uiconf;
             this.uiOpens.set(url, ui);
-            if (isCache) this.uiCache.set(url, ui);
+            // 如果需要缓存起来不销毁的话，还需要保存在这个cache中
+            if (isCache) {
+                this.uiCache.set(url, ui);
+            }
 
             ui.onShow(...params);
             this.setFocus(ui);
@@ -179,24 +182,15 @@ export default class UIManager {
 
         // 设置新的焦点UI
         this.currentFocusedUI = ui;
-
-        // 将新UI添加到焦点栈顶部
-        this.addToFocusStack(ui);
-
-        // 调用onFocus方法
-        ui.onFocus();
-    }
-
-    /**
-     * 将UI添加到焦点栈
-     * @param ui 要添加的UI
-     */
-    private addToFocusStack(ui: UIBase) {
+        
         // 如果UI已经在栈中，先移除
         this.removeFromFocusStack(ui);
 
         // 添加到栈顶
         this.focusStack.push(ui);
+
+        // 调用onFocus方法
+        ui.onFocus();
     }
 
     /**
