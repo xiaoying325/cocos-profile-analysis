@@ -1,11 +1,7 @@
 import UIBase from "./UIBase";
 import { UILayer, UIConfig } from "./UIConfig";
 
-
-
 export default class UIManager {
-
-    //单例模式
     private static _instance: UIManager = null;
     public static get instance(): UIManager {
         if (this._instance == null) {
@@ -14,92 +10,47 @@ export default class UIManager {
         return this._instance;
     }
 
-
-    // LIFE-CYCLE CALLBACKS:
-
-    // onLoad () {}
-
     private uiRoot: cc.Node = null;
-    private uiLayers: Map<UILayer, cc.Node> = new Map()
-    /**
-     * 存放当前所有已经打开的ui
-     * - 简单点说，就是把当前打开的ui缓存到这个表中，方便读取内容
-     */
-    private uiOpens: Map<string, UIBase> = new Map()
+    private uiLayers: Map<UILayer, cc.Node> = new Map();
+    private uiOpens: Map<string, UIBase> = new Map();
+    private uiCache: Map<string, UIBase> = new Map();
 
-
-    /**
-     * 所有标记了cache的UI都会进入这个缓存
-     */
-    private uiCache: Map<string, UIBase> = new Map()
-
-    /**
-     * 当前获得焦点的UI
-     */
-    private currentFocusedUI: UIBase = null
-
-    /**
-     * UI焦点历史栈，用于跟踪UI的打开顺序
-     */
-    private focusStack: UIBase[] = []
-
+    private currentFocusedUI: UIBase = null;
+    private focusStack: UIBase[] = [];
 
     public init(root: cc.Node) {
         this.uiRoot = root;
 
-        // 创建这些层级节点
-
+        // 创建层节点（保持原有逻辑）
         Object.keys(UILayer)
-            .filter(key => isNaN(Number(key))) // 过滤掉枚举的数值键
+            .filter(key => isNaN(Number(key)))
             .forEach(key => {
-                const layer = UILayer[key]; // 数值 (0,1,2...)
-                const node = new cc.Node(key); // 节点名称用字符串，比如 "BACKGROUND"
-
+                const layer = (UILayer as any)[key] as UILayer;
+                const node = new cc.Node(key);
                 this.uiRoot.addChild(node);
-                node.setSiblingIndex(layer);   // 控制渲染顺序
-                this.uiLayers.set(layer, node); // 存的是数值作为 key
+                node.setSiblingIndex(layer);
+                this.uiLayers.set(layer, node);
             });
-    }
-
-    private loadBundleAsync(bundleName: string): Promise<cc.AssetManager.Bundle> {
-        return new Promise((resolve, reject) => {
-            cc.assetManager.loadBundle(bundleName, (err, bundle) => {
-                if (err) reject(err);
-                else resolve(bundle);
-            });
-        });
-    }
-
-    // 封装成 Promise 版本的 load
-    private loadPrefabAsync(bundle: cc.AssetManager.Bundle, url: string): Promise<cc.Prefab> {
-        return new Promise((resolve, reject) => {
-            bundle.load(url, cc.Prefab, (err, prefab) => {
-                if (err) reject(err);
-                else resolve(prefab);
-            });
-        });
     }
 
     public async open(uiconf: UIConfig, ...params: any[]): Promise<UIBase> {
         const { bundle, url, layer, isCache } = uiconf;
-
         if (!bundle || !url || layer === undefined || layer === null) {
             cc.error("UIManager.open 传入的参数不完整");
             return null;
         }
 
-
         let ui: UIBase = null;
 
-        // 已经打开的UI
+        // 已经打开的 UI —— 重复打开，只触发 onShow + setFocus
         if (this.uiOpens.has(url)) {
             ui = this.uiOpens.get(url);
             ui.onShow(...params);
-            this.setFocus(ui);   //  确保焦点逻辑走一次
+            this.setFocus(ui);
             return ui;
         }
 
-        // 缓存的UI
+        // 缓存中的 UI —— 直接激活、onShow、入打开表、focus
         if (this.uiCache.has(url)) {
             ui = this.uiCache.get(url);
             ui.node.active = true;
@@ -109,9 +60,22 @@ export default class UIManager {
             return ui;
         }
 
+        // 直接加载 bundle + prefab（把原来两个 Promise 函数内联）
         try {
-            const loadedBundle = await this.loadBundleAsync(bundle);
-            const prefab = await this.loadPrefabAsync(loadedBundle, url);
+            const loadedBundle: cc.AssetManager.Bundle = await new Promise((resolve, reject) => {
+                cc.assetManager.loadBundle(bundle, (err, b) => {
+                    if (err) reject(err);
+                    else resolve(b);
+                });
+            });
+
+            const prefab: cc.Prefab = await new Promise((resolve, reject) => {
+                loadedBundle.load(url, cc.Prefab, (err, p: cc.Prefab) => {
+                    if (err) reject(err);
+                    else resolve(p);
+                });
+            });
+
             const node = cc.instantiate(prefab);
             const parent = this.uiLayers.get(layer);
             parent.addChild(node);
@@ -125,13 +89,10 @@ export default class UIManager {
 
             ui.uiConf = uiconf;
             this.uiOpens.set(url, ui);
-            if (isCache) {
-                this.uiCache.set(url, ui);
-            }
+            if (isCache) this.uiCache.set(url, ui);
 
             ui.onShow(...params);
-            this.setFocus(ui);   // 🔥 设置焦点
-
+            this.setFocus(ui);
             return ui;
         } catch (err) {
             cc.error(`打开 UI 失败: ${url}`, err);
@@ -139,10 +100,6 @@ export default class UIManager {
         }
     }
 
-    /** 
-     * 关闭UI
-     * - 根据配置中的cache字段，来决定ui实例是隐藏还是销毁
-    */
     public close(url: string) {
         const ui = this.uiOpens.get(url);
         if (!ui) {
@@ -152,10 +109,24 @@ export default class UIManager {
 
         const { isCache } = ui.uiConf;
 
-        // 先处理焦点回退（这里会在需要时调用一次 onFocusLost）
-        this.handleFocusOnClose(ui);
+        // —— inline 的焦点回退逻辑（原来在 handleFocusOnClose）
+        const wasFocused = (this.currentFocusedUI === ui);
+        if (wasFocused) {
+            // 只有当它当前具有焦点时才调用一次 onFocusLost
+            ui.onFocusLost();
+        }
 
-        // 再执行隐藏/销毁
+        // 从历史栈中移除（不论是否是焦点）
+        this.removeFromFocusStack(ui);
+
+        // 如果它曾是焦点，回退到栈顶的上一个 UI（如果有）
+        if (wasFocused) {
+            const newFocusUI = this.focusStack[this.focusStack.length - 1] || null;
+            this.currentFocusedUI = newFocusUI;
+            if (newFocusUI) newFocusUI.onFocus();
+        }
+
+        // 再做隐藏或销毁
         if (isCache) {
             ui.node.active = false;
             ui.onHide();
@@ -167,81 +138,31 @@ export default class UIManager {
         this.uiOpens.delete(url);
     }
 
-
-    /**
-     * 设置UI焦点
-     * @param ui 要设置焦点的UI
-     */
     private setFocus(ui: UIBase) {
-        // 如果切换到不同的UI，先让旧UI失去焦点（但不要把旧UI从栈里移除！）
         if (this.currentFocusedUI && this.currentFocusedUI !== ui) {
             this.currentFocusedUI.onFocusLost();
-            // 这里千万不要 removeFromFocusStack(this.currentFocusedUI);
-            // 我们要保留历史，才能回退
+            // 注意：不要从栈中移除旧的 currentFocusedUI，这样才能回退
         }
 
-        // 更新当前焦点
         this.currentFocusedUI = ui;
 
-        // 把“新 UI”在栈里去重，然后压到栈顶
+        // 把新 UI 在栈中去重后压栈
         this.removeFromFocusStack(ui);
         this.focusStack.push(ui);
 
-        // 通知获得焦点
         ui.onFocus();
     }
 
-
-    /**
-     * 从焦点栈中移除UI
-     * @param ui 要移除的UI
-     */
     private removeFromFocusStack(ui: UIBase) {
-        const index = this.focusStack.indexOf(ui);
-        if (index > -1) {
-            this.focusStack.splice(index, 1);
-        }
+        const idx = this.focusStack.indexOf(ui);
+        if (idx > -1) this.focusStack.splice(idx, 1);
     }
 
-    /**
-     * 获取当前焦点UI
-     */
     public getCurrentFocusedUI(): UIBase {
         return this.currentFocusedUI;
     }
 
-    /**
-     * 获取焦点栈
-     */
     public getFocusStack(): UIBase[] {
-        return [...this.focusStack]; // 返回副本，避免外部修改
+        return [...this.focusStack];
     }
-
-    /**
-     * 当UI关闭时，处理焦点转移
-     * @param closedUI 被关闭的UI
-     */
-    private handleFocusOnClose(closedUI: UIBase) {
-        const wasFocused = (this.currentFocusedUI === closedUI);
-
-        // 如果被关闭的正是当前焦点，先让它失焦（只调用一次）
-        if (wasFocused) {
-            closedUI.onFocusLost();
-        }
-
-        // 不管是否是焦点，都需要把它从栈里移除
-        this.removeFromFocusStack(closedUI);
-
-        // 如果它是当前焦点，回退到栈顶的上一个 UI
-        if (wasFocused) {
-            const newFocusUI = this.focusStack[this.focusStack.length - 1] || null;
-            this.currentFocusedUI = newFocusUI;
-            if (newFocusUI) {
-                newFocusUI.onFocus();
-            }
-        }
-        // 如果不是当前焦点被关闭，则不改变 currentFocusedUI
-    }
-
-    // update (dt) {}
 }
