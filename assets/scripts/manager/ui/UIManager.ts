@@ -33,6 +33,16 @@ export default class UIManager {
      */
     private uiCache: Map<string, UIBase> = new Map()
 
+    /**
+     * 当前获得焦点的UI
+     */
+    private currentFocusedUI: UIBase = null
+
+    /**
+     * UI焦点历史栈，用于跟踪UI的打开顺序
+     */
+    private focusStack: UIBase[] = []
+
 
     public init(root: cc.Node) {
         this.uiRoot = root;
@@ -77,6 +87,9 @@ export default class UIManager {
             ui.onShow(...params);
             this.uiOpens.set(url, ui);
 
+            // 设置缓存的UI为焦点
+            this.setFocus(ui);
+
             return ui;
         }
 
@@ -118,6 +131,10 @@ export default class UIManager {
                     }
 
                     ui.onShow(...params);
+                    
+                    // 设置新UI为焦点
+                    this.setFocus(ui);
+                    
                     resolve(ui);
 
                 });
@@ -146,13 +163,91 @@ export default class UIManager {
         } else {
             ui.onClose()
             ui.node.destroy();
-            // TODO 资源卸载
-
         }
+
+        // 处理焦点转移
+        this.handleFocusOnClose(ui);
 
         this.uiOpens.delete(url);
     }
 
+    /**
+     * 设置UI焦点
+     * @param ui 要设置焦点的UI
+     */
+    private setFocus(ui: UIBase) {
+        // 如果当前有焦点UI，将其从焦点栈中移除
+        if (this.currentFocusedUI && this.currentFocusedUI !== ui) {
+            this.removeFromFocusStack(this.currentFocusedUI);
+        }
+
+        // 设置新的焦点UI
+        this.currentFocusedUI = ui;
+        
+        // 将新UI添加到焦点栈顶部
+        this.addToFocusStack(ui);
+        
+        // 调用onFocus方法
+        ui.onFocus();
+    }
+
+    /**
+     * 将UI添加到焦点栈
+     * @param ui 要添加的UI
+     */
+    private addToFocusStack(ui: UIBase) {
+        // 如果UI已经在栈中，先移除
+        this.removeFromFocusStack(ui);
+        
+        // 添加到栈顶
+        this.focusStack.push(ui);
+    }
+
+    /**
+     * 从焦点栈中移除UI
+     * @param ui 要移除的UI
+     */
+    private removeFromFocusStack(ui: UIBase) {
+        const index = this.focusStack.indexOf(ui);
+        if (index > -1) {
+            this.focusStack.splice(index, 1);
+        }
+    }
+
+    /**
+     * 获取当前焦点UI
+     */
+    public getCurrentFocusedUI(): UIBase {
+        return this.currentFocusedUI;
+    }
+
+    /**
+     * 获取焦点栈
+     */
+    public getFocusStack(): UIBase[] {
+        return [...this.focusStack]; // 返回副本，避免外部修改
+    }
+
+    /**
+     * 当UI关闭时，处理焦点转移
+     * @param closedUI 被关闭的UI
+     */
+    private handleFocusOnClose(closedUI: UIBase) {
+        // 从焦点栈中移除被关闭的UI
+        this.removeFromFocusStack(closedUI);
+        
+        // 如果被关闭的UI是当前焦点UI
+        if (this.currentFocusedUI === closedUI) {
+            // 从焦点栈中获取上一个UI作为新的焦点
+            if (this.focusStack.length > 0) {
+                const newFocusUI = this.focusStack[this.focusStack.length - 1];
+                this.currentFocusedUI = newFocusUI;
+                newFocusUI.onFocus();
+            } else {
+                this.currentFocusedUI = null;
+            }
+        }
+    }
 
     // update (dt) {}
 }

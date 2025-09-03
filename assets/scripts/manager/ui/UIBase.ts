@@ -63,12 +63,52 @@ export default abstract class UIBase extends cc.Component {
     /**
      * 当UI被重新聚焦的时候调用
      * - 比如从其他UI切换回来的时候
-
+     * - 当UI重新获得焦点时
+     * - 当用户从其他界面返回到当前UI时
+     * 
+     * 子类可以重写此方法来实现具体的焦点处理逻辑
+     * 例如：刷新数据、重新绑定事件、更新UI状态等
      */
     public onFocus(...params: any[]) {
-
+        // 默认实现：输出调试信息
+        if (this.uiName) {
+            console.log(`UI [${this.uiName}] 获得焦点`, ...params);
+        } else {
+            console.log(`UI [${this.uiConf?.url || 'Unknown'}] 获得焦点`, ...params);
+        }
+        
+        // 子类可以重写此方法来实现具体的焦点处理逻辑
+        // 例如：
+        // - 刷新数据
+        // - 重新绑定事件监听
+        // - 更新UI状态
+        // - 播放焦点动画
+        // - 重新计算布局等
     }
 
+    /**
+     * 检查当前UI是否获得焦点
+     */
+    public isFocused(): boolean {
+        // 这里需要导入UIManager，但为了避免循环依赖，我们通过其他方式判断
+        // 子类可以重写此方法来实现更精确的焦点判断
+        return this.node && this.node.active;
+    }
 
+    /**
+     * 获取焦点时的通用处理
+     * 子类可以重写此方法来实现具体的焦点处理逻辑
+     */
+    protected onFocusGained(...params: any[]) {
+        // 默认空实现，子类可以重写
+    }
+
+    /**
+     * 失去焦点时的通用处理
+     * 子类可以重写此方法来实现具体的失焦处理逻辑
+     */
+    protected onFocusLost(...params: any[]) {
+        // 默认空实现，子类可以重写
+    }
 
 }

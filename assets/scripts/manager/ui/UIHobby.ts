@@ -13,7 +13,7 @@ const { ccclass, property } = cc._decorator;
 
 @ccclass
 export default class UIHobby extends UIBase {
-    public uiName: string;
+    public uiName: string = "UIHobby";
 
 
     // LIFE-CYCLE CALLBACKS:
@@ -46,8 +46,27 @@ export default class UIHobby extends UIBase {
     }
 
 
-    public onFocus(): void {
-        console.log('UIHobby onFocus');
+    public onFocus(...params: any[]): void {
+        console.log('UIHobby onFocus', ...params);
+        
+        // 调用父类的onFocus
+        super.onFocus(...params);
+        
+        // 实现具体的焦点处理逻辑
+        this.onFocusGained(...params);
+    }
+
+    protected onFocusGained(...params: any[]): void {
+        console.log('UIHobby 获得焦点，可以在这里刷新数据或更新UI状态');
+        
+        // 示例：刷新数据
+        // this.refreshData();
+        
+        // 示例：重新绑定事件
+        // this.bindEvents();
+        
+        // 示例：更新UI状态
+        // this.updateUIState();
     }
 
 
