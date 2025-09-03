@@ -88,19 +88,19 @@ export default class UIManager {
             return null;
         }
 
+        let ui: UIBase = null;
+
         // 已经打开的UI
         if (this.uiOpens.has(url)) {
-            cc.error(`UIManager.open 重复打开UI: ${url}`);
-
-            let ui = this.uiOpens.get(url);
+            ui = this.uiOpens.get(url);
             ui.onShow(...params);
-            this.setFocus(ui);
+            this.setFocus(ui);   //  确保焦点逻辑走一次
             return ui;
         }
 
         // 缓存的UI
         if (this.uiCache.has(url)) {
-            const ui = this.uiCache.get(url);
+            ui = this.uiCache.get(url);
             ui.node.active = true;
             ui.onShow(...params);
             this.uiOpens.set(url, ui);
@@ -109,16 +109,13 @@ export default class UIManager {
         }
 
         try {
-            // 加载 bundle
             const loadedBundle = await this.loadBundleAsync(bundle);
-            // 加载 prefab
             const prefab = await this.loadPrefabAsync(loadedBundle, url);
-            // 实例化节点
             const node = cc.instantiate(prefab);
             const parent = this.uiLayers.get(layer);
             parent.addChild(node);
 
-            const ui = node.getComponent(UIBase);
+            ui = node.getComponent(UIBase);
             if (!ui) {
                 cc.error(`Prefab 没有继承 BaseUI: ${url}`);
                 node.destroy();
@@ -127,13 +124,12 @@ export default class UIManager {
 
             ui.uiConf = uiconf;
             this.uiOpens.set(url, ui);
-            // 如果需要缓存起来不销毁的话，还需要保存在这个cache中
             if (isCache) {
                 this.uiCache.set(url, ui);
             }
 
             ui.onShow(...params);
-            this.setFocus(ui);
+            this.setFocus(ui);   // 🔥 设置焦点
 
             return ui;
         } catch (err) {
@@ -147,7 +143,6 @@ export default class UIManager {
      * - 根据配置中的cache字段，来决定ui实例是隐藏还是销毁
     */
     public close(url: string) {
-        // w我检测到这个UI是不需要进缓存的
         let ui = this.uiOpens.get(url);
         if (!ui) {
             cc.error(`UIManager.close 没有找到这个UI: ${url}`);
@@ -155,19 +150,25 @@ export default class UIManager {
         }
 
         const { isCache } = ui.uiConf;
+
+        // 在关闭时一定要触发失焦
+        if (this.currentFocusedUI === ui) {
+            ui.onFocusLost();
+        }
+
         if (isCache) {
             ui.node.active = false;
             ui.onHide();
         } else {
-            ui.onClose()
+            ui.onClose();
             ui.node.destroy();
         }
 
-        // 处理焦点转移
+        // 焦点回退
         this.handleFocusOnClose(ui);
-
         this.uiOpens.delete(url);
     }
+
 
     /**
      * 设置UI焦点
@@ -182,7 +183,7 @@ export default class UIManager {
 
         // 设置新的焦点UI
         this.currentFocusedUI = ui;
-        
+
         // 如果UI已经在栈中，先移除
         this.removeFromFocusStack(ui);
 
