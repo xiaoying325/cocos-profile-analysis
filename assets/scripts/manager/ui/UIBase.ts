@@ -19,6 +19,9 @@ export default abstract class UIBase extends cc.Component {
     // update (dt) {}
 
 
+    /**
+     * 每个UI打开的配置
+     */
     public uiConf: UIConfig;
 
 
