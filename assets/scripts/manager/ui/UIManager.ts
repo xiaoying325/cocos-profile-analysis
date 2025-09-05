@@ -1,6 +1,35 @@
 import UIBase from "./UIBase";
 import { UILayer, UIConfig } from "./UIConfig";
 
+
+
+interface PopupTask {
+    /**
+     * 弹窗对应的UI配置
+     */
+    conf: UIConfig;
+    /**
+     * 弹窗的对应的参数
+     */
+    params: any[];
+    /**
+     * 弹窗的优先级  数字越大，优先级越高
+     */
+    priority: number;
+    /**
+     * 弹窗成功执行时的异步回调
+     * @param ui 
+     * @returns 
+     */
+    resolve: (ui: UIBase) => void;
+    /**
+     * 弹窗失败执行时的异步回调
+     * @param err 
+     * @returns 
+     */
+    reject: (err?: any) => void;
+}
+
 export default class UIManager {
     private static _instance: UIManager = null;
     public static get instance(): UIManager {
@@ -33,9 +62,6 @@ export default class UIManager {
      */
     private loadingMap: Map<string, Promise<UIBase>> = new Map();
 
-
-
-
     /**
      * 当前处在焦点的ui
      */
@@ -45,6 +71,42 @@ export default class UIManager {
      * 焦点UI栈
      */
     private focusStack: UIBase[] = [];
+
+
+    /**
+     * 弹窗队列（支持优先级）,本质上是一个数组，里面存放了一个又一个的弹窗任务，等待恰当的时机触发
+     */
+    private popupQueue: PopupTask[] = [];
+
+    /**
+    * 当前正在显示的弹窗
+    */
+    private currentPopup: UIBase = null;
+
+    /**
+     * 弹窗队列是否暂停
+     * - 你想啥时候调用你就调用
+     */
+    private popupQueuePaused: boolean = false; // 是否暂停队列
+
+
+    /**
+     * 暂停弹窗队列（入队不会触发显示）
+     */
+    public pausePopupQueue() {
+        this.popupQueuePaused = true; // 表示暂停弹窗的弹出处理
+    }
+
+    /**
+     * 恢复弹窗队列（触发队列中弹窗依次显示）
+     */
+    public resumePopupQueue() {
+        this.popupQueuePaused = false; // 表示不暂停弹窗弹出的处理
+        this.checkNextPopup();
+    }
+
+
+
 
     public init(root: cc.Node) {
         this.uiRoot = root;
@@ -61,8 +123,6 @@ export default class UIManager {
             });
     }
 
-
-
     /**
      * 判断某个ui是否正在打开
      * @param url 
@@ -71,7 +131,6 @@ export default class UIManager {
     private isLoading(url: string): boolean {
         return this.loadingMap.has(url); // 你即使同一帧同一时刻，发起n多个重复的，打开重复UI的请求，最终也只会返回同一个promise
     }
-
 
     //加一个优化，同一帧 或者同一时刻，调用了多次打开同样的ui，这个时候，需要判断下当前这个ui是否正在加载中
     public async open(uiconf: UIConfig, ...params: any[]): Promise<UIBase> {
@@ -99,10 +158,9 @@ export default class UIManager {
             return ui;
         }
 
-        // 如果正在加载中，直接复用正在进行的 Promise
+        // 如果正在加载中，直接返回已有 Promise
         if (this.isLoading(url)) {
-            const loadingPromise = this.loadingMap.get(url);
-            return loadingPromise;
+            return this.loadingMap.get(url);
         }
 
         // 发起加载
@@ -145,22 +203,17 @@ export default class UIManager {
                 cc.error(`打开 UI 失败: ${url}`, err);
                 return null;
             } finally {
-                // 无论成功还是失败，加载结束后都清理掉
                 this.loadingMap.delete(url);
             }
-        })(); //我是用了一个立即执行函数
+        })();
 
-        // 标记到 loadingMap 中
         this.loadingMap.set(url, loadPromise);
-
         return loadPromise;
     }
-
 
     // 此时UI焦点栈中有 uiA uib uic uid...
     // 我们先关闭uid 预期肯定是uid的onFocusLost调用，然后uic的onFocus调用,执行完之后，此时ui栈中只有uiA uib uic
     // 我们再关闭uic 预期肯定是uic的onFocusLost调用，然后uib的onFocus调用,执行完之后，此时ui栈中只有uiA uib
-
     public close(url: string) {
         const ui = this.uiOpens.get(url);
         if (!ui) {
@@ -199,6 +252,12 @@ export default class UIManager {
         }
 
         this.uiOpens.delete(url);
+
+        // 弹窗队列逻辑：关闭弹窗后自动弹出下一个
+        if (this.currentPopup === ui) {
+            this.currentPopup = null;
+            this.checkNextPopup();
+        }
     }
 
     private setFocus(ui: UIBase) {
@@ -227,5 +286,42 @@ export default class UIManager {
 
     public getFocusStack(): UIBase[] {
         return [...this.focusStack];
+    }
+
+    // —— 弹窗队列相关 —— //
+
+    /**
+     * 入队弹窗，支持优先级
+     * @param uiconf UI 配置
+     * @param params 参数
+     * @param priority 优先级，数值越大优先级越高
+     */
+    public enqueuePopup(uiconf: UIConfig, params: any[] = [], priority: number = 0): Promise<UIBase> {
+        return new Promise<UIBase>((resolve, reject) => {
+            const task: PopupTask = { conf: uiconf, params, priority, resolve, reject };
+            this.popupQueue.push(task);
+            this.popupQueue.sort((a, b) => b.priority - a.priority);
+
+            if (!this.popupQueuePaused) {
+                this.checkNextPopup();
+            }
+        });
+    }
+
+    /**
+     * 检查队列并弹出下一个弹窗
+     */
+    private async checkNextPopup() {
+        if (this.currentPopup) return;
+
+        const next = this.popupQueue.shift();
+        if (!next) return;
+
+        try {
+            this.currentPopup = await this.open(next.conf, ...next.params);
+            next.resolve(this.currentPopup); 
+        } catch (err) {
+            next.reject(err); 
+        }
     }
 }

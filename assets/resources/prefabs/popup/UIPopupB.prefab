@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "UIDialogRule",
+    "_name": "UIPopupB",
     "_objFlags": 0,
     "_parent": null,
     "_children": [
@@ -182,7 +182,7 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "262e641d-f516-4d83-aa4a-364bd8442493"
+      "__id__": 0
     },
     "fileId": "d1PNXP03NOdLpb8aD70/nY",
     "sync": false
@@ -208,13 +208,13 @@
     "_color": {
       "__type__": "cc.Color",
       "r": 255,
-      "g": 255,
-      "b": 255,
+      "g": 0,
+      "b": 0,
       "a": 255
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 153.4,
+      "width": 182.34,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -227,7 +227,7 @@
       "ctor": "Float64Array",
       "array": [
         0,
-        0,
+        12,
         0,
         0,
         0,
@@ -266,8 +266,8 @@
     ],
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
-    "_string": "UIDialog",
-    "_N$string": "UIDialog",
+    "_string": "UIPopupB",
+    "_N$string": "UIPopupB",
     "_fontSize": 40,
     "_lineHeight": 40,
     "_enableWrapText": true,
@@ -290,13 +290,13 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "262e641d-f516-4d83-aa4a-364bd8442493"
+      "__id__": 0
     },
     "fileId": "96Mv11fyxKWaXFXsf6oItF",
     "sync": false
   },
   {
-    "__type__": "ce7a3J0IIhG7aIG0OjxEHDx",
+    "__type__": "8853dcwezRHLqDCo7/P16yh",
     "_name": "",
     "_objFlags": 0,
     "node": {
@@ -311,7 +311,7 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "262e641d-f516-4d83-aa4a-364bd8442493"
+      "__id__": 0
     },
     "fileId": "",
     "sync": false

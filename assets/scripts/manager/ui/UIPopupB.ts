@@ -1,17 +1,11 @@
-// Learn TypeScript:
-//  - https://docs.cocos.com/creator/manual/en/scripting/typescript.html
-// Learn Attribute:
-//  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import UIBase from "./UIBase";
 
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class UIDialogRule extends UIBase {
-    public uiName: string = "UIDialogRule";
+export default class UIPopupB extends UIBase {
+    public uiName: string = "UIPopupB";
 
 
     // LIFE-CYCLE CALLBACKS:
@@ -19,7 +13,7 @@ export default class UIDialogRule extends UIBase {
     // onLoad () {}
 
     public onFocus(...params: any[]): void {
-        console.log('UIDialogRule onFocus', ...params);
+        console.log('UIPopupB onFocus', ...params);
         
         // 调用父类的onFocus
         super.onFocus(...params);
@@ -29,14 +23,14 @@ export default class UIDialogRule extends UIBase {
     }
 
     protected onFocusGained(...params: any[]): void {
-        console.log('UIDialogRule 获得焦点，可以在这里刷新规则数据');
+        console.log('UIPopupB 获得焦点，可以在这里刷新规则数据');
         
         // 示例：刷新规则数据
         // this.refreshRuleData();
     }
 
     public onFocusLost(...params: any[]): void {
-        console.log('UIDialogRule 失去焦点，可以在这里保存规则设置');
+        console.log('UIPopupB 失去焦点，可以在这里保存规则设置');
         
         // 调用父类的onFocusLost
         super.onFocusLost(...params);
