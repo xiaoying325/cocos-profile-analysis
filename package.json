@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "gifuct-js": "^2.1.2"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
   }
 }
