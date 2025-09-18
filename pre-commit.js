@@ -19,7 +19,7 @@ if (imageFiles.length === 0) {
 
 try {
   console.log("🔧 检测到图片文件，开始压缩...");
-  execSync(`node tools/compress-textures/main.js ${imageFiles.join(" ")}`, { stdio: "inherit" });
+  execSync(`node tools/compress-textures/main.js ${imageFiles.map(f => `"${f}"`).join(" ")}`, { stdio: "inherit" });
 
   // 压缩完成后重新 add
   execSync(`git add ${imageFiles.join(" ")}`);
