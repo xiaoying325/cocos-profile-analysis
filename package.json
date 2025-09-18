@@ -1,8 +1,13 @@
 {
   "dependencies": {
-    "gifuct-js": "^2.1.2"
+    "child_process": "^1.0.2",
+    "gifuct-js": "^2.1.2",
+    "tinify": "^1.8.1"
   },
   "devDependencies": {
     "husky": "^9.1.7"
+  },
+  "scripts": {
+    "prepare": "husky install"
   }
 }
