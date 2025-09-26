@@ -1,7 +1,7 @@
 {
   "title": "cocos-profile-analysis",
   "packageName": "org.cocos2d.demo",
-  "startScene": "75024187-5bf9-4af4-8ab0-0d1eb1bc8b8e",
+  "startScene": "5bc2e0dd-214b-4f31-aae8-921280e9c725",
   "excludeScenes": [],
   "includeSDKBox": false,
   "orientation": {
@@ -15,21 +15,31 @@
   "inlineSpriteFrames_native": true,
   "mergeStartScene": false,
   "optimizeHotUpdate": false,
-  "md5Cache": true,
+  "md5Cache": false,
   "encryptJs": true,
   "xxteaKey": "b4cf5e09-c30a-4f",
   "zipCompressJs": true,
   "fb-instant-games": {},
   "android": {
-    "packageName": "org.cocos2d.demo"
+    "packageName": "org.cocos2d.demo",
+    "REMOTE_SERVER_ROOT": ""
   },
   "ios": {
-    "packageName": "org.cocos2d.demo"
+    "packageName": "org.cocos2d.demo",
+    "REMOTE_SERVER_ROOT": "",
+    "ios_enable_jit": true
   },
   "mac": {
-    "packageName": "org.cocos2d.demo"
+    "packageName": "org.cocos2d.demo",
+    "REMOTE_SERVER_ROOT": "",
+    "width": 1280,
+    "height": 720
   },
-  "win32": {},
+  "win32": {
+    "REMOTE_SERVER_ROOT": "",
+    "width": 1280,
+    "height": 720
+  },
   "android-instant": {
     "REMOTE_SERVER_ROOT": "",
     "host": "",
@@ -40,5 +50,14 @@
     "skipRecord": false
   },
   "appBundle": false,
-  "includeAnySDK": false
+  "includeAnySDK": false,
+  "mainCompressionType": "default",
+  "mainIsRemote": false,
+  "nativeMd5Cache": true,
+  "harmonyos-next": {
+    "packageName": "org.cocos2d.demo",
+    "REMOTE_SERVER_ROOT": "",
+    "jsEngine": "JSVM"
+  },
+  "agreements": {}
 }
