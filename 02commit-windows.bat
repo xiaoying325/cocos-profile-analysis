@@ -65,8 +65,8 @@ git diff --cached --quiet && (
     exit /b
 )
 
-:: 提交并推送
-git commit -m "%commit_msg%" --no-verify
+:: 提交并推送 --no-verify 表示不触发狗子
+git commit -m "%commit_msg%"
 git push
 
 echo 提交完成！
