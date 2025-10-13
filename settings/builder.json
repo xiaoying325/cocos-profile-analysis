@@ -16,7 +16,7 @@
   "mergeStartScene": false,
   "optimizeHotUpdate": false,
   "md5Cache": false,
-  "encryptJs": true,
+  "encryptJs": false,
   "xxteaKey": "b4cf5e09-c30a-4f",
   "zipCompressJs": true,
   "fb-instant-games": {},
@@ -53,7 +53,7 @@
   "includeAnySDK": false,
   "mainCompressionType": "default",
   "mainIsRemote": false,
-  "nativeMd5Cache": true,
+  "nativeMd5Cache": false,
   "harmonyos-next": {
     "packageName": "org.cocos2d.demo",
     "REMOTE_SERVER_ROOT": "",
