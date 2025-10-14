@@ -1,7 +1,6 @@
 {
-  "ver": "2.3.7",
+  "ver": "2.3.5",
   "uuid": "875fb50d-bad0-4744-b64e-c0cc1d4dc1d4",
-  "importer": "texture",
   "type": "sprite",
   "wrapMode": "clamp",
   "filterMode": "bilinear",
@@ -13,9 +12,8 @@
   "platformSettings": {},
   "subMetas": {
     "aobing_weapon_d": {
-      "ver": "1.0.6",
+      "ver": "1.0.4",
       "uuid": "20806eeb-a09d-4cc7-bf28-a0537e11696f",
-      "importer": "sprite-frame",
       "rawTextureUuid": "875fb50d-bad0-4744-b64e-c0cc1d4dc1d4",
       "trimType": "auto",
       "trimThreshold": 1,
