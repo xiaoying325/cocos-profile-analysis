@@ -1,8 +1,12 @@
 {
   "title": "cocos-profile-analysis",
   "packageName": "org.cocos2d.demo",
-  "startScene": "5bc2e0dd-214b-4f31-aae8-921280e9c725",
-  "excludeScenes": [],
+  "startScene": "eef39fd6-480b-4947-bce5-5bb5e7a018dd",
+  "excludeScenes": [
+    "5bc2e0dd-214b-4f31-aae8-921280e9c725",
+    "a2b4bc9a-c3a2-4e48-923e-12ce0ca50828",
+    "4851808c-6667-4a30-8eb8-4761641da493"
+  ],
   "includeSDKBox": false,
   "orientation": {
     "landscapeLeft": true,
