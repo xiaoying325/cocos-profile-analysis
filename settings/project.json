@@ -1,5 +1,4 @@
 {
-  "start-scene": "current",
   "group-list": [
     "default"
   ],
@@ -9,12 +8,21 @@
     ]
   ],
   "excluded-modules": [
-    "3D Physics/Builtin",
-    "SafeArea",
+    "Collider",
+    "DragonBones",
+    "Mesh",
+    "Native Socket",
+    "Physics",
+    "TiledMap",
+    "VideoPlayer",
+    "3D",
+    "3D Primitive",
     "3D Physics/cannon.js",
-    "3D Particle"
+    "3D Physics/Builtin",
+    "3D Particle",
+    "SafeArea"
   ],
-  "last-module-event-record-time": 1760961457690,
+  "last-module-event-record-time": 1761893994911,
   "design-resolution-width": 960,
   "design-resolution-height": 640,
   "fit-width": false,
@@ -39,5 +47,7 @@
   },
   "migrate-history": [
     "cloud-function"
-  ]
+  ],
+  "preview-port": 7456,
+  "clear-simulator-cache": true
 }
